@@ -14,6 +14,8 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const compression = require('compression');
 
+const cors = require('cors');
+
 const tourRouter = require(`./routes/tourRoutes`);
 const userRouter = require(`./routes/userRoutes`);
 const reviewRouter = require(`./routes/reviewRoutes`);
@@ -26,6 +28,12 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // 1. GLOBAL MIDDLEWARES
+
+app.use(cors());
+
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());
+
 // app.use(helmet());
 // Further HELMET configuration for Security Policy (CSP)
 const scriptSrcUrls = [
