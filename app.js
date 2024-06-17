@@ -12,6 +12,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
+const compression = require('compression');
+
 const tourRouter = require(`./routes/tourRoutes`);
 const userRouter = require(`./routes/userRoutes`);
 const reviewRouter = require(`./routes/reviewRoutes`);
@@ -103,6 +105,8 @@ app.use(
 //   console.log('Hello form the middleware❤️');
 //   next();
 // });
+
+app.use(compression());
 
 // TEST MIDDLEWARE
 app.use((req, res, next) => {
