@@ -1,4 +1,6 @@
 const express = require('express');
+const cors = require('cors');
+const compression = require('compression');
 const path = require('path');
 // const fs = require('fs');
 const morgan = require('morgan');
@@ -11,10 +13,6 @@ const mongoSanitize = require('express-mongo-sanitize');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
-
-const compression = require('compression');
-
-const cors = require('cors');
 
 const tourRouter = require(`./routes/tourRoutes`);
 const userRouter = require(`./routes/userRoutes`);
