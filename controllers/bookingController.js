@@ -55,30 +55,43 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 // });
 
 const createBookingCheckout = async (session) => {
-  console.log(' in createBookingCheckout');
-  const tour = session.client_reference_id;
-  const user = (await User.findOne({ email: session.customer_email })).id;
-  const price = session.line_items[0].amount / 100;
-  console.log(tour, user, price);
-  await Booking.create({ tour, user, price });
+  try {
+    console.log('in createBookingCheckout');
+    const tour = session.client_reference_id;
+    const user = (await User.findOne({ email: session.customer_email })).id;
+    const price = session.line_items[0].amount / 100;
+    console.log(tour, user, price);
+    await Booking.create({ tour, user, price });
+  } catch (error) {
+    console.error('Error in createBookingCheckout:', error);
+  }
 };
 
-exports.webhookCheckout = (req, res, next) => {
-  console.log('in webcheckout');
+exports.webhookCheckout = async (req, res, next) => {
+  console.log('in webhookCheckout');
   const signature = req.headers['stripe-signature'];
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
+
   console.log(event);
+
   if (event.type === 'checkout.session.completed') {
-    createBookingCheckout(event.data.object);
+    try {
+      await createBookingCheckout(event.data.object);
+    } catch (error) {
+      console.error('Error processing webhook event:', error);
+      return res.status(500).send('Internal Server Error');
+    }
   }
+
   res.status(200).json({ received: true });
-  next();
 };
+
 
 exports.createBooking = factory.createOne(Booking);
 exports.getBooking = factory.getOne(Booking);
