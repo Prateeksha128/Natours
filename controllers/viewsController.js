@@ -9,8 +9,8 @@ exports.alerts = (req, res, next) => {
   if (alert === 'booking') {
     res.locals.alert =
       'Booking Successful! Please check your email for a confirmation message. If your booking details do not appear immediately, please refresh and check again later. Thank you for choosing our service.';
-    next();
   }
+  next();
 };
 
 exports.getOverview = catchAsync(async (req, res) => {

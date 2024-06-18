@@ -62,6 +62,7 @@ const createBookingCheckout = async (session) => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
+  // console.log('in webcheckout');
   const signature = req.headers['stripe-signature'];
   let event;
   try {
@@ -69,10 +70,12 @@ exports.webhookCheckout = (req, res, next) => {
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
+  // console.log(event);
   if (event.type === 'checkout.session.completed') {
     createBookingCheckout(event.data.object);
   }
   res.status(200).json({ received: true });
+  next();
 };
 
 exports.createBooking = factory.createOne(Booking);
